@@ -197,5 +197,5 @@ std::shared_ptr<Image> ConvertCommand(gsl::span<uint8_t const> srcData, std::opt
     }
 
     // At this point, we have R 8, RG 8.8, RGB 8.8.8 or RGBA 8.8.8.8 unsigned integer texture data
-    return std::make_shared<Image>(std::move(dstImg.value()));
+    return std::make_shared<Image>(std::move(*dstImg));
 }
