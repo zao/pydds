@@ -1,0 +1,7 @@
+include dds/*.cpp dds/*.hpp dds/*.h
+graft dds/dep/cmp_core/shaders
+graft dds/dep/cmp_core/source 
+graft dds/dep/fmt/include
+graft dds/dep/gli/gli
+graft dds/dep/gli/external/glm
+graft dds/dep/gsl/include

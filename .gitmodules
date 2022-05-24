@@ -1,0 +1,9 @@
+[submodule "dds/dep/gli"]
+	path = dds/dep/gli
+	url = https://github.com/g-truc/gli.git
+[submodule "dds/dep/gsl"]
+	path = dds/dep/gsl
+	url = https://github.com/microsoft/GSL.git
+[submodule "dds/dep/fmt"]
+	path = dds/dep/fmt
+	url = https://github.com/fmtlib/fmt.git
