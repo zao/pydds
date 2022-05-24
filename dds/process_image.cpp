@@ -22,7 +22,12 @@ struct ImageRef {
 };
 
 std::shared_ptr<Image> ConvertCommand(gsl::span<uint8_t const> srcData, std::optional<Rect> cropOpt) {
-    gli::texture2d srcTex{gli::load(reinterpret_cast<char const*>(srcData.data()), srcData.size())};
+    auto tex = gli::load(reinterpret_cast<char const*>(srcData.data()), srcData.size());
+    if (tex.empty()) {
+        throw std::runtime_error(fmt::format("could not load texture"));
+    }
+
+    gli::texture2d srcTex{tex};
     if (srcTex.empty()) {
         throw std::runtime_error(fmt::format("could not load texture"));
     }
