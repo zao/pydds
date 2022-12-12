@@ -48,7 +48,7 @@ long_description = (Path(__file__).parent / "README.md").read_text()
 
 setup(
     name="pydds",
-    version="0.0.4",
+    version="0.0.5",
     description="DDS (including BC7) decompression bindings",
     long_description=long_description,
     long_description_content_type="text/markdown",
