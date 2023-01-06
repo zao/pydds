@@ -1,5 +1,6 @@
 import os
 from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext
 from wheel.bdist_wheel import bdist_wheel
 
 cmp_core_sources = [
@@ -41,7 +42,6 @@ ext_modules = [
             ("FMT_HEADER_ONLY", "1"),
             ('Py_LIMITED_API', 0x03060000),
         ],
-        extra_compile_args=['-std=c++17'],
         include_dirs=include_dirs,
         py_limited_api=True,
     ),
@@ -60,6 +60,17 @@ class bdist_wheel_abi3(bdist_wheel):
 from pathlib import Path
 long_description = (Path(__file__).parent / "README.md").read_text()
 
+class build_ext_cxx17(build_ext):
+    def build_extensions(self):
+        c = self.compiler.compiler_type
+        if c == 'msvc':
+            for e in self.extensions:
+                e.extra_compile_args = ['/std=c++latest']
+        else:
+            for e in self.extensions:
+                e.extra_compile_args = ['-std=c++17']
+        build_ext.build_extensions(self)
+
 setup(
     name="pydds",
     version="0.0.5",
@@ -72,7 +83,10 @@ setup(
         "Natural Language :: English",
         "Programming Language :: Python :: 3 :: Only",
     ],
-    cmdclass={"bdist_wheel": bdist_wheel_abi3},
+    cmdclass={
+        "bdist_wheel": bdist_wheel_abi3,
+        "build_ext": build_ext_cxx17,
+    },
     ext_modules=ext_modules,
     install_requires=["Pillow"]
 )
