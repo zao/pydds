@@ -32,7 +32,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.3
         env:
-          CIBW_ARCHS: "x86_64 aarch64"
+          CIBW_ARCHS_LINUX: "x86_64 aarch64"
           CIBW_ARCHS_MACOS: "universal2"
           CIBW_ARCHS_WINDOWS: "AMD64 ARM64"
           CIBW_PROJECT_REQUIRES_PYTHON: ">=3.8"
