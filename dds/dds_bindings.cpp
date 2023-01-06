@@ -3,6 +3,8 @@
 
 #include "process_image.hpp"
 
+#include <stdexcept>
+
 struct ImageHandleObject {
     PyObject_HEAD
     Image* img;
