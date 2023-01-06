@@ -82,7 +82,7 @@ static PyObject* dds_sys_decompress_with_crop(PyObject* self, PyObject* args) {
         return nullptr;
     }
 
-    auto* ret = (ImageHandleObject*)PyObject_NEW(ImageHandleObject, ImageHandleType);
+    auto* ret = (ImageHandleObject*)PyObject_New(ImageHandleObject, ImageHandleType);
     if (ret) {
         ret->img = img.release();
         return (PyObject*)ret;
