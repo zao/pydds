@@ -36,7 +36,7 @@ jobs:
           CIBW_ARCHS_MACOS: "universal2"
           CIBW_ARCHS_WINDOWS: "AMD64 ARM64"
           CIBW_PROJECT_REQUIRES_PYTHON: ">=3.8"
-          CIBW_BUILD: "cp38-*"
+          CIBW_BUILD: "cp38-* cp39-win_arm64"
 
       - uses: actions/upload-artifact@v3
         with:
