@@ -11,7 +11,7 @@ struct ImageHandleObject {
 static void ImageHandle_dealloc(ImageHandleObject* self) {
     delete self->img;
     self->img = nullptr;
-    Py_TYPE(self)->tp_free((PyObject*)self);
+    ((freefunc)PyType_GetSlot(Py_TYPE(self), Py_tp_free))((PyObject*)self);
 }
 
 static PyObject* ImageHandle_extent(ImageHandleObject* self, void* closure) {
@@ -41,21 +41,11 @@ static PyGetSetDef ImageHandle_getsetters[] = {
     {nullptr},
 };
 
-static PyTypeObject ImageHandleType = {
-    PyVarObject_HEAD_INIT(nullptr, 0)
-    .tp_name = "dds.ImageHandle",
-    .tp_doc = PyDoc_STR("Image handle"),
-    .tp_basicsize = sizeof(ImageHandleObject),
-    .tp_itemsize = 0,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_dealloc = (destructor)ImageHandle_dealloc,
-    .tp_methods = ImageHandle_methods,
-    .tp_getset = ImageHandle_getsetters,
-};
+static PyTypeObject* ImageHandleType;
 
 static PyObject* ImageHandle_create(PyTypeObject* type, PyObject* args) {
     ImageHandleObject* self;
-    self = (ImageHandleObject*)type->tp_alloc(type, 0);
+    self = (ImageHandleObject*)((allocfunc)PyType_GetSlot(type, Py_tp_alloc))(type, 0);
     if (self) {
         //  self->img = 
     }
@@ -92,7 +82,7 @@ static PyObject* dds_sys_decompress_with_crop(PyObject* self, PyObject* args) {
         return nullptr;
     }
 
-    auto* ret = (ImageHandleObject*)PyObject_NEW(ImageHandleObject, &ImageHandleType);
+    auto* ret = (ImageHandleObject*)PyObject_NEW(ImageHandleObject, ImageHandleType);
     if (ret) {
         ret->img = img.release();
         return (PyObject*)ret;
@@ -116,58 +106,42 @@ static struct PyModuleDef dds_sysmodule = {
     DdsSysMethods,
 };
 
+static PyType_Slot ImageHandleSlots[] = {
+    {Py_tp_dealloc, (void*)(destructor)ImageHandle_dealloc},
+    {Py_tp_methods, ImageHandle_methods},
+    {Py_tp_getset, ImageHandle_getsetters},
+    {Py_tp_doc, (void*)PyDoc_STR("Image handle")},
+    {0},
+};
+
+static PyType_Spec ImageHandleSpec = {
+    .name = "dds.ImageHandle",
+    .basicsize = sizeof(ImageHandleObject),
+    .itemsize = 0,
+    .flags = Py_TPFLAGS_DEFAULT,
+    .slots = ImageHandleSlots,
+};
+
 PyMODINIT_FUNC
 PyInit_dds_sys(void) {
     PyObject* m;
-    if (PyType_Ready(&ImageHandleType) < 0) {
-        return nullptr;
-    }
-
     m = PyModule_Create(&dds_sysmodule);
     if (!m) {
         return nullptr;
     }
 
-    Py_INCREF(&ImageHandleType);
-    if (PyModule_AddObject(m, "ImageHandle", (PyObject*)&ImageHandleType) < 0) {
-        Py_DECREF(&ImageHandleType);
+    ImageHandleType = (PyTypeObject*)PyType_FromSpec(&ImageHandleSpec);
+    if (!ImageHandleType) {
+        Py_DECREF(m);        
+        return nullptr;
+    }
+
+    Py_INCREF(ImageHandleType);
+    if (PyModule_AddObject(m, "ImageHandle", (PyObject*)ImageHandleType) < 0) {
+        Py_DECREF(ImageHandleType);
         Py_DECREF(m);
         return nullptr;
     }
 
     return m;
 }
-
-#if 0
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-
-namespace py = pybind11;
-
-PYBIND11_MODULE(dds_sys, m) {
-    m.doc() = "Bindings for DDS decompression and cropping.";
-
-    py::class_<Image, std::shared_ptr<Image>>(m, "Image")
-        .def("pixels",
-             [](Image const &img) -> py::bytes {
-                 return py::bytes(reinterpret_cast<char const *>(img.data.data()), img.data.size());
-             })
-        .def_readonly("components", &Image::components)
-        .def("extent", [](Image const &img) -> py::tuple { return py::make_tuple(img.extent.x, img.extent.y); });
-
-    m.def(
-        "decompress_with_crop",
-        [](py::bytes const &srcData, std::optional<std::array<int, 4>> crop) -> std::shared_ptr<Image> {
-            py::buffer_info info = py::buffer(srcData).request();
-
-            gsl::span srcSpan(reinterpret_cast<uint8_t const *>(info.ptr), static_cast<size_t>(info.size));
-            std::optional<Rect> cropRect;
-            if (crop) {
-                auto [x0, y0, w, h] = *crop;
-                cropRect = Rect{gli::ivec2(x0, y0), gli::ivec2(w, h)};
-            }
-            return ConvertCommand(srcSpan, cropRect);
-        },
-        py::arg("src_data"), py::arg("crop") = py::none());
-}
-#endif
