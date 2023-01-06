@@ -40,7 +40,7 @@ ext_modules = [
         sources=["dds/dds_bindings.cpp"] + cmp_core_sources + dds_sources,
         define_macros=[
             ("FMT_HEADER_ONLY", "1"),
-            ('Py_LIMITED_API', 0x03060000),
+            ('Py_LIMITED_API', 0x03080000),
         ],
         include_dirs=include_dirs,
         py_limited_api=True,
