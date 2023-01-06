@@ -65,7 +65,7 @@ class build_ext_cxx17(build_ext):
         c = self.compiler.compiler_type
         if c == 'msvc':
             for e in self.extensions:
-                e.extra_compile_args = ['/std=c++latest']
+                e.extra_compile_args = ['/std:c++latest']
         else:
             for e in self.extensions:
                 e.extra_compile_args = ['-std=c++17']
