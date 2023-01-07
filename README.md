@@ -8,8 +8,8 @@ Replacement library for ImageMagick to decompress from many DDS pixel formats wi
 ```python
 from dds import decode_dds
 
-# optional cropping region of [x0, y0, w, h] to be applied while decoding
-crop = [0, 0, 20, 20]
+# optional cropping region of (x0, y0, w, h) to be applied while decoding
+crop = (0, 0, 20, 20)
 
 with open('Atlas.dds', 'rb') as fh:
     img = decode_dds(fh.read(), crop)
