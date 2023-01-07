@@ -28,4 +28,4 @@ struct Image {
     std::vector<uint8_t> data;
 };
 
-std::shared_ptr<Image> ConvertCommand(gsl::span<uint8_t const> srcData, std::optional<Rect> crop);
+std::unique_ptr<Image> ConvertCommand(gsl::span<uint8_t const> srcData, std::optional<Rect> crop);

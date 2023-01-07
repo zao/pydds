@@ -21,7 +21,7 @@ struct ImageRef {
     gsl::span<uint8_t const> data;
 };
 
-std::shared_ptr<Image> ConvertCommand(gsl::span<uint8_t const> srcData, std::optional<Rect> cropOpt) {
+std::unique_ptr<Image> ConvertCommand(gsl::span<uint8_t const> srcData, std::optional<Rect> cropOpt) {
     auto tex = gli::load(reinterpret_cast<char const*>(srcData.data()), srcData.size());
     if (tex.empty()) {
         throw std::runtime_error(fmt::format("could not load texture"));
@@ -197,5 +197,5 @@ std::shared_ptr<Image> ConvertCommand(gsl::span<uint8_t const> srcData, std::opt
     }
 
     // At this point, we have R 8, RG 8.8, RGB 8.8.8 or RGBA 8.8.8.8 unsigned integer texture data
-    return std::make_shared<Image>(std::move(*dstImg));
+    return std::make_unique<Image>(std::move(*dstImg));
 }
