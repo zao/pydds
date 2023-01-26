@@ -87,6 +87,7 @@ setup(
         "bdist_wheel": bdist_wheel_abi3,
         "build_ext": build_ext_cxx17,
     },
+    packages=["dds"],
     ext_modules=ext_modules,
     install_requires=["Pillow"]
 )
