@@ -1,4 +1,4 @@
-include dds/*.cpp dds/*.hpp dds/*.h
+include dds/*.cpp dds/*.hpp dds/*.h dds/*.py
 graft dds/dep/cmp_core/shaders
 graft dds/dep/cmp_core/source 
 graft dds/dep/fmt/include
