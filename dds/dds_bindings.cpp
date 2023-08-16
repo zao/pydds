@@ -24,7 +24,7 @@ static PyObject* ImageHandle_extent(ImageHandleObject* self, void* closure) {
 static PyObject* ImageHandle_pixels(ImageHandleObject* self, void* closure) {
     auto& pixels = self->img->data;
     char const* data_ptr = reinterpret_cast<char const*>(pixels.data());
-    Py_ssize_t data_len = static_cast<Py_ssize_t>(pixels.size()) * self->img->components;
+    Py_ssize_t data_len = static_cast<Py_ssize_t>(pixels.size());
     return Py_BuildValue("y#", data_ptr, data_len);
 }
 
@@ -44,15 +44,6 @@ static PyGetSetDef ImageHandle_getsetters[] = {
 };
 
 static PyTypeObject* ImageHandleType;
-
-static PyObject* ImageHandle_create(PyTypeObject* type, PyObject* args) {
-    ImageHandleObject* self;
-    self = (ImageHandleObject*)((allocfunc)PyType_GetSlot(type, Py_tp_alloc))(type, 0);
-    if (self) {
-        //  self->img = 
-    }
-    return nullptr;
-}
 
 static PyObject* dds_sys_decompress_with_crop(PyObject* self, PyObject* args) {
     char const* src_data;
