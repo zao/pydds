@@ -73,7 +73,7 @@ class build_ext_cxx17(build_ext):
 
 setup(
     name="pydds",
-    version="0.0.7",
+    version="0.0.8",
     description="DDS (including BC7) decompression bindings",
     long_description=long_description,
     long_description_content_type="text/markdown",
